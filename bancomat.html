@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style="font-size: 20px; width: 250px; height: 100px; background: #b5bff0"></div>
+    <input type="text" value="" placeholder="enter the ammount" onfocus="numbersOnly(this)">
+    <button onclick="bancomat.withdrawCash()">Get cash</button>
+    <div style="margin-top: 100px; font-size: 30px; width: 250px; height: 100px; background: #f6f6f8"></div>
+
+    <script>
+
+        //"Bankomat"
+        let monitor = document.getElementsByTagName('div')[0];
+        let moneyInfo = document.getElementsByTagName('div')[1];
+        let bancomat = {
+            500: 10, 
+            200: 10, 
+            100: 10, 
+            50: 20, 
+            20: 5, 
+            10: 5,
+            moneyLeft: function() {
+                let allMoney = this[500] * 500 + this[200] * 200 + this[100] * 100 + 
+                this[50] * 50 + this[20] * 20 + this[10] * 10;
+                return allMoney;
+            },
+
+            //computing cash to withdraw
+            withdrawCash: function() {
+                //getting ammount from input
+                let ammount = document.getElementsByTagName('input')[0].value;
+                //check if enough money in bankomat
+                if(this.moneyLeft() < ammount) {
+                    monitor.innerHTML = 'There is not enough money in the ATM. Please, try less ammount';
+                    moneyInfo.innerHTML = 'Money in bankomat: ' + bancomat.moneyLeft();
+                    document.getElementsByTagName('input')[0].value = '';
+                    return;
+                }
+
+                //check if enter ammount right way
+                if(! ammount || isNaN(ammount)) {
+                    monitor.innerHTML = 'Please, enter ammount to withdraw.';
+                    moneyInfo.innerHTML = 'Money in bankomat: ' + bancomat.moneyLeft();
+                    document.getElementsByTagName('input')[0].value = '';
+                    return;
+                }
+
+                //withdrawing cash according to denominations that exist
+                while(ammount) {
+                    if(ammount >= 500 && this[500]) {
+                        this[500] -= 1;
+                        ammount -= 500;
+                    }
+                    else if(ammount >= 200 && this[200]) {
+                        this[200] -= 1;
+                        ammount -= 200;
+                    }
+                    else if(ammount >= 100 && this[100]) {
+                        this[100] -= 1;
+                        ammount -= 100;
+                    }
+                    else if(ammount >= 50 && this[50]) {
+                        this[50] -= 1;
+                        ammount -= 50;
+                    }
+                    else if(ammount >= 20 && this[20]) {
+                        this[20] -= 1;
+                        ammount -= 20;
+                    }
+                    else if(ammount >= 10 && this[10]) {
+                        this[10] -= 1;
+                        ammount -= 10;
+                    }
+                    else {
+                        //if has no denominations to withdraw the whole ammount
+                        monitor.innerHTML = `The ATM ran out of small bills. Money left from ammount: ${ammount}`;
+                        moneyInfo.innerHTML = 'Money in bankomat: ' + bancomat.moneyLeft();
+                        document.getElementsByTagName('input')[0].value = '';
+                        return;
+                    }
+                }
+
+                //if withdraw all ammount
+                monitor.innerHTML = 'Operation sucsessful. Don`t forget to take your card and cash';
+                moneyInfo.innerHTML = 'Money in bankomat: ' + bancomat.moneyLeft();
+                document.getElementsByTagName('input')[0].value = '';
+                return;
+            }
+        };
+
+        //avoiding letters while inputting ammount to withdraw
+        function numbersOnly(element) {
+            let numbersListener = element.addEventListener('keydown', function(event){
+                if (/^[a-zA-Z]$/.test(event.key)) {
+                    event.preventDefault();
+                }
+            }) 
+        }
+    </script>
+</body>
+</html>
